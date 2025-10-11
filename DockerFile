@@ -1,0 +1,48 @@
+FROM python:3.12-slim
+
+# Set environment variables
+ARG ENV=dev
+ARG EXTRA=cpu
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=off
+ENV ENV=${ENV}
+ENV EXTRA=${EXTRA}
+
+# Log environment variables for debugging
+RUN echo "Running with ENV=${ENV} and EXTRA=${EXTRA}"
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies for your app
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    make \
+    && apt-get clean
+
+# Install PyTorch (optional, since it's already in the base image)
+RUN pip install --upgrade pip \
+    && pip install uv
+
+# Copy the pyproject.toml and other necessary files
+COPY pyproject.toml /app/
+#RUN mv /app/2pyproject.toml /app/pyproject.toml
+
+# Copy the project files into the container
+COPY src/ /app/
+COPY Makefile /app/
+
+RUN echo "h" >> /app/README.md
+# Sync dependencies using uv with the chosen extra
+RUN make sync
+# Install the project in editable mode (via Make)
+RUN make install
+# RUN uv venv .venv
+# RUN uv run pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.0
+
+
+# Set the command to run your app
+CMD ["uv", "run", "app/src/ragprod/presentation/mcp/add_docs.py"]
+
+# Build the image using:
+# docker build --build-arg ENV=pro --build-arg EXTRA=rocm -t ragprod_app .

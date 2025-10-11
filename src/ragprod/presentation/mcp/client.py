@@ -1,30 +1,21 @@
 from ragprod.infrastructure.client import AsyncChromaDBClient
-from ragprod.core.embedding.huggingface_embedding import HuggingFaceEmbedder
+from ragprod.domain.embedding.huggingface_embedding import HuggingFaceEmbedder
 import torch
 
-class MockAsyncEmbeddingModel:
-    async def embed_documents(self, texts):
-        # Simulate async delay
-        return [[float(i)] * 768 for i in range(len(texts))]
-
-    async def embed_query(self, query):
-        return [0.5] * 768
-
-from ragprod.core.document import Document
-
-documents = [
-    Document(raw_text="Machine learning is fun", metadata={"topic": "ML"}),
-    Document(raw_text="Deep learning uses neural networks", metadata={"topic": "DL"}),
-    Document(raw_text="AI is the future", metadata={"topic": "AI"}),
-]
-
+# ----- Global singletons -----
+embedder = HuggingFaceEmbedder(
+    model_name="jinaai/jina-code-embeddings-0.5b",
+    model_kwargs={"device_map": "cpu", "dtype": "bfloat16"},
+)
 
 try:
-    client = AsyncChromaDBClient(
+    clientDB = AsyncChromaDBClient(
+        persist_directory="./chromadb_test",
+        collection_name="test",
         embedding_model=HuggingFaceEmbedder(
             model_name="jinaai/jina-code-embeddings-0.5b",
             model_kwargs={
-                "device_map": "cuda",
+                "device_map": "cpu",
                 "dtype": torch.bfloat16,
                 #"attn_implementation": "flash_attention_2",
             },
@@ -33,6 +24,7 @@ try:
             }
         )
     )
+    print("Initialized.")
 except Exception as e:
     print(f"Error initializing client: {e}")
     raise e

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Dict, Any, Union
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -12,7 +12,17 @@ class Document(BaseModel, BaseDocument):
     raw_text: str
     source: str = "Unknown"
     title: str = "Untitled"
-    metadata: Dict[str, Any] = {}
+    _metadata: Dict[str, Any] = {}  # <-- internal name
+    distance: Union[float, None] = None
+    score: Union[float, None] = None
+
+    @property
+    def metadata(self) -> Dict[str, Any]:
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, value: Dict[str, Any]):
+        self._metadata = value
 
     @property
     def content(self) -> str:

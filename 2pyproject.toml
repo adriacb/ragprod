@@ -26,35 +26,37 @@ dependencies = [
     "together>=1.5.25",
 ]
 
-# Specific versions of torch, torchvision, and torchaudio are installed based on the extra feature uv sync --extra cu124
 [project.optional-dependencies]
 cpu = ["torch==2.4.1", "torchvision==0.19.1", "torchaudio==2.4.1"]
 cu124 = ["torch==2.4.1", "torchvision==0.19.1", "torchaudio==2.4.1"]
+#rocm = ["torch==2.4.1+rocm6.0", "torchvision==0.19.1+rocm6.0", "torchaudio==2.4.1+rocm6.0"]
 
 [tool.uv]
-# The cpu and cu124 extras are mutually exclusive, you can't use both at the same time
-conflicts = [[{ extra = "cu124" }, { extra = "cpu" }]]
-
-# The package is only installed on Linux systems
-# environments = ["sys_platform == 'linux' and os_name == 'posix'"]
+# Ensure cpu and rocm are mutually exclusive
+conflicts = [
+  [{ extra = "rocm" }, { extra = "cpu" }],
+  [{ extra = "cu124" }, { extra = "cpu" }],
+  #[{ extra = "rocm" }, { extra = "cu124" }]
+]
 
 [tool.uv.sources]
-# The torch, torchvision, and torchaudio packages are installed from the pytorch-cpu and pytorch-cu124 indexes
 torch = [
   { index = "pytorch-cpu", extra = "cpu" },
   { index = "pytorch-cu124", extra = "cu124" },
+  #{ index = "pytorch-rocm", extra = "rocm" }
 ]
 torchvision = [
   { index = "pytorch-cpu", extra = "cpu" },
   { index = "pytorch-cu124", extra = "cu124" },
+  #{ index = "pytorch-rocm", extra = "rocm" }
 ]
 torchaudio = [
   { index = "pytorch-cpu", extra = "cpu" },
   { index = "pytorch-cu124", extra = "cu124" },
+  #{ index = "pytorch-rocm", extra = "rocm" }
 ]
 
 [[tool.uv.index]]
-# The pytorch-cpu index is used to install the torch, torchvision, and torchaudio packages
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
@@ -63,6 +65,11 @@ explicit = true
 name = "pytorch-cu124"
 url = "https://download.pytorch.org/whl/cu124"
 explicit = true
+
+#[[tool.uv.index]]
+#name = "pytorch-rocm"
+#url = "https://download.pytorch.org/whl/rocm6s.0"
+#explicit = true
 
 [project.scripts]
 ragprod = "ragprod:main"

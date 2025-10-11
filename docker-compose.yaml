@@ -1,0 +1,24 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ragprod_app
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"  # Change port if needed
+    environment:
+      - ENV=${ENV:-dev}  # Pass the environment variable, default to 'dev'
+      - EXTRA=${EXTRA:-cpu}  # Pass the extra variable, default to 'cpu'
+    command: uv run app/src/ragprod/presentation/mcp/add_docs.py  # Entry point for your app
+    restart: unless-stopped
+    networks:
+      - ragprod_network
+
+networks:
+  ragprod_network:
+    driver: bridge
+
+#  docker-compose build --build-arg ENV=prod --build-arg EXTRA=rocm
