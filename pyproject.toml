@@ -4,56 +4,62 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-  { name = "Adrià Cabello", email = "cabl.adria@gmail.com" }
+    { name = "Adrià Cabello", email = "cabl.adria@gmail.com" }
 ]
 requires-python = ">=3.12"
 dependencies = [
-  "accelerate>=1.10.1",
-  "bitsandbytes>=0.47.0",
-  "chromadb>=1.1.0",
-  "editables>=0.5",
-  "fastmcp>=2.12.3",
-  "hatchling>=1.27.0",
-  "huggingface-hub[hf-xet]>=0.35.0",
-  "ipykernel>=6.30.1",
-  "langfuse>=3.5.0",
-  "openai>=1.108.1",
-  "opentelemetry-sdk>=1.37.0",
-  "pydantic>=2.11.7",
-  "qdrant-client>=1.15.1",
-  "requests>=2.32.5",
-  "rich>=14.1.0",
-  "sentence-transformers>=5.1.0",
-  "together>=1.5.25",
+    "accelerate>=1.10.1",
+    "bitsandbytes>=0.47.0",
+    "chromadb>=1.1.0",
+    "editables>=0.5",
+    "fastmcp>=2.12.3",
+    "hatchling>=1.27.0",
+    "huggingface-hub[hf-xet]>=0.35.0",
+    "ipykernel>=6.30.1",
+    "langfuse>=3.5.0",
+    "openai>=1.108.1",
+    "opentelemetry-sdk>=1.37.0",
+    "pydantic>=2.11.7",
+    "qdrant-client>=1.15.1",
+    "requests>=2.32.5",
+    "rich>=14.1.0",
+    "sentence-transformers>=5.1.0",
+    "together>=1.5.25",
 ]
 
+# Specific versions of torch, torchvision, and torchaudio are installed based on the extra feature uv sync --extra <extra>
 [project.optional-dependencies]
 dev = ["ruff", "pytest", "pytest-cov"]
-cpu = ["torch==2.5.0", "torchvision==0.20.0", "torchaudio==2.5.0"]
-cu124 = ["torch==2.5.0+cu124", "torchvision==0.20.0+cu124", "torchaudio==2.5.0+cu124"]
+cpu    = ["torch==2.5.0",        "torchvision==0.20.0",       "torchaudio==2.5.0"]
+cu124  = ["torch==2.5.0+cu124",  "torchvision==0.20.0+cu124", "torchaudio==2.5.0+cu124"]
+
+[tool.uv]
+conflicts = [
+    [{ extra = "cpu"   }, { extra = "cu124" }],
+]
 
 [tool.uv.sources]
 torch = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu124", marker = "extra == 'cu124'" },
+  { index = "pytorch-cpu",  extra = "cpu"   },
+  { index = "pytorch-cu124",extra = "cu124" },
 ]
 torchvision = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu124", marker = "extra == 'cu124'" },
+  { index = "pytorch-cpu",  extra = "cpu"   },
+  { index = "pytorch-cu124",extra = "cu124" },
 ]
 torchaudio = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu124", marker = "extra == 'cu124'" },
+  { index = "pytorch-cpu",  extra = "cpu"   },
+  { index = "pytorch-cu124",extra = "cu124" },
 ]
 
 [[tool.uv.index]]
-name = "pytorch-cpu"
-url = "https://download.pytorch.org/whl/cpu"
+name     = "pytorch-cpu"
+url      = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
 [[tool.uv.index]]
-name = "pytorch-cu124"
-url = "https://download.pytorch.org/whl/cu124"
+name     = "pytorch-cu124"
+url      = "https://download.pytorch.org/whl/cu124"
 explicit = true
 
 [project.scripts]
