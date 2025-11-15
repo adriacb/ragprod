@@ -18,15 +18,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v1
+        uses: astral-sh/setup-uv@v7
         with:
-          uv-version: "latest"
+          version: "0.8.24"
           enable-cache: true
 
-      - name: Install dev dependencies
+      - name: Sync dev dependencies (CPU only)
         run: uv sync --extra dev --extra cpu
 
       - name: Run Ruff
@@ -40,32 +41,35 @@ jobs:
     needs: []
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7       # or @v6, but use a recent stable version
+        uses: astral-sh/setup-uv@v7
         with:
-          version: "0.8.24"               # pin to the version you know works
+          version: "0.8.24"
           enable-cache: true
 
       - name: Check uv version
         run: uv --version
 
-      # Runtime + project install
+      # Runtime dependencies (CPU only)
       - name: Sync runtime dependencies
         run: uv sync --extra cpu
 
+      # Install project
       - name: Install project
         run: uv pip install -e .
 
-      # Only install dev deps on development
+      # Dev dependencies (only on development branch)
       - name: Install dev dependencies
         if: github.ref_name == 'development'
         run: uv sync --extra dev
 
+      # Run tests
       - name: Run tests
         run: |
-          uv run pytest ragprod/tests -q --maxfail=1 \
+          uv run pytest ragprod/test -q --maxfail=1 \
             --cov=mcpagent \
             --cov-report=xml:coverage.xml
 
