@@ -32,15 +32,16 @@ dev    = ["ruff", "pytest", "pytest-cov"]
 cpu    = ["torch==2.5.0", "torchvision==0.20.0", "torchaudio==2.5.0"]
 cu124  = ["torch==2.5.0+cu124", "torchvision==0.20.0+cu124", "torchaudio==2.5.0+cu124"]
 
-[tool.uv.sources.cpu]
-torch       = [{ index = "pytorch-cpu" }]
-torchvision = [{ index = "pytorch-cpu" }]
-torchaudio  = [{ index = "pytorch-cpu" }]
+[tool.uv.sources]
+# CPU packages
+{ package = "torch",        index = "pytorch-cpu",  extra = "cpu" }
+{ package = "torchvision",  index = "pytorch-cpu",  extra = "cpu" }
+{ package = "torchaudio",   index = "pytorch-cpu",  extra = "cpu" }
 
-[tool.uv.sources.cu124]
-torch       = [{ index = "pytorch-cu124" }]
-torchvision = [{ index = "pytorch-cu124" }]
-torchaudio  = [{ index = "pytorch-cu124" }]
+# CUDA 12.4 packages
+{ package = "torch",        index = "pytorch-cu124", extra = "cu124" }
+{ package = "torchvision",  index = "pytorch-cu124", extra = "cu124" }
+{ package = "torchaudio",   index = "pytorch-cu124", extra = "cu124" }
 
 [[tool.uv.index]]
 name     = "pytorch-cpu"
