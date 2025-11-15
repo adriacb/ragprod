@@ -18,8 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -38,11 +37,9 @@ jobs:
   # -------------------------
   tests:
     runs-on: ubuntu-latest
-    needs: []
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -54,17 +51,17 @@ jobs:
         run: uv --version
 
       # Runtime dependencies (CPU only)
-      - name: Sync runtime dependencies
+      - name: Sync runtime dependencies (CPU)
         run: uv sync --extra cpu
 
       # Install project
       - name: Install project
         run: uv pip install -e .
 
-      # Dev dependencies (only on development branch)
-      - name: Install dev dependencies
+      # Dev dependencies only on development branch
+      - name: Sync dev dependencies (CPU)
         if: github.ref_name == 'development'
-        run: uv sync --extra dev
+        run: uv sync --extra dev --extra cpu
 
       # Run tests
       - name: Run tests
@@ -73,7 +70,7 @@ jobs:
             --cov=mcpagent \
             --cov-report=xml:coverage.xml
 
-      # Upload coverage (development only)
+      # Upload coverage report only on development
       - name: Upload coverage report
         if: github.ref_name == 'development'
         uses: actions/upload-artifact@v4
