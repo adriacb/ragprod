@@ -45,9 +45,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v1
         with:
-          uv-version: "latest"
-          enable-cache: true
-      
+          uv-version: "0.8.24"   # pin the correct version
+
       - name: Check uv version
         run: uv --version
 
