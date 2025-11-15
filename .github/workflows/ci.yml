@@ -24,11 +24,9 @@ jobs:
 
       - name: Sync dependencies from pyproject.toml
         run: uv sync --extra cpu
-        working-directory: ragprod
 
       - name: Install project in editable mode
         run: uv run pip install -e .
-        working-directory: ragprod
 
       - name: Install dev dependencies
         if: github.ref == 'refs/heads/development'
