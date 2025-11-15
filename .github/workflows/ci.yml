@@ -11,42 +11,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Set up Python
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
+      # 3️⃣ Install uv (universal version manager)
       - name: Install uv
-        run: pip install uv
+        run: pip install --no-cache-dir uv
 
-      - name: Sync dependencies from pyproject.toml
+      # 4️⃣ Sync runtime dependencies (CPU only)
+      - name: Sync runtime dependencies
         run: uv sync --extra cpu
+        working-directory: .
 
-      - name: Install project in editable mode
-        run: uv run pip install -e .
+      # 5️⃣ Install project in editable mode
+      - name: Install project
+        run: uv run pip install -e . --no-cache-dir
+        working-directory: .
 
+      # 6️⃣ Install dev dependencies only on development branch
       - name: Install dev dependencies
         if: github.ref == 'refs/heads/development'
-        run: uv sync --extra dev
-        working-directory: ragprod
+        run: uv sync --extra dev --no-cache-dir
+        working-directory: .
 
+      # 7️⃣ Lint with ruff (dev branch only)
       - name: Lint with ruff
         if: github.ref == 'refs/heads/development'
         run: uv run ruff check src
-        working-directory: ragprod
+        working-directory: .
 
-      - name: Run tests with coverage
+      # 8️⃣ Run tests with coverage (dev branch only)
+      - name: Run tests with pytest and coverage
         if: github.ref == 'refs/heads/development'
         run: |
           uv run pytest -q --maxfail=1 --cov=mcpagent --cov-report=xml:coverage.xml
-        working-directory: mcpagent
+        working-directory: .
 
+      # 9️⃣ Upload coverage artifact (dev branch only)
       - name: Upload coverage artifact
         if: github.ref == 'refs/heads/development'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-xml
-          path: mcpagent/coverage.xml
+          path: coverage.xml
