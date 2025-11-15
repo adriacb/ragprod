@@ -50,6 +50,9 @@ jobs:
       - name: Check uv version
         run: uv --version
 
+      - name: List repo contents (debug)
+        run: ls -l
+
       # Runtime + dev dependencies for tests
       - name: Sync all needed dependencies
         run: |
@@ -60,11 +63,11 @@ jobs:
       - name: Install project
         run: uv pip install -e .
 
-      # Run tests (ensure correct working directory)
+      # Run tests
       - name: Run tests
         working-directory: ${{ github.workspace }}
         run: |
-          uv run pytest tests -q --maxfail=1 \
+          uv run pytest ./tests -q --maxfail=1 \
             --cov=src \
             --cov-report=xml:coverage.xml
 
