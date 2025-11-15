@@ -1,7 +1,6 @@
 import os
 from fastmcp import FastMCP
 from .client import clientDB, embedder
-from ragprod.domain.embedding.huggingface_embedding import HuggingFaceEmbedder
 
 from fastmcp.server.auth.providers.github import GitHubProvider  # o el que elijas
 from dotenv import load_dotenv

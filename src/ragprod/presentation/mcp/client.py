@@ -1,5 +1,4 @@
 from ragprod.application.use_cases import GetClientService, GetEmbeddingsService
-from ragprod.domain.embedding.huggingface_embedding import HuggingFaceEmbedder
 
 
 embeddingsService = GetEmbeddingsService()

@@ -1,45 +1,44 @@
 # Makefile for managing project dependencies and environment setup
 
-# Set default environment to dev
+# Default environment and extra
 ENV ?= dev
-
-# Define extras for uv sync
 EXTRA ?= cpu
 
-# Default target: install dependencies and setup environment
+# Default target
 all: install
 
 # Target for syncing dependencies using uv
 sync:
 	@echo "Syncing dependencies with uv for environment: $(ENV), extra: $(EXTRA)"
-	uv sync --extra $(EXTRA)
+	@# Use system Python to avoid uv downloading incompatible versions
+	uv sync --extra $(EXTRA) || { echo "uv sync failed"; exit 1; }
 
 # Target for installing the project in editable mode
 install: sync
 	@echo "Installing the project in editable mode..."
 	uv pip install -e .
 
-# Target for running tests (to be uncommented when needed)
+# Target for running tests (optional)
 # test:
 #	@echo "Running tests..."
 #	pytest
 
-# Target for linting (to be uncommented when needed)
+# Target for linting (optional)
 # lint:
 #	@echo "Running linting..."
 #	flake8 .
 
-# Target for cleaning up the environment
+# Clean virtual environment
 clean:
 	@echo "Cleaning up the environment..."
-	rm -rf .venv
+	@if [ -d ".venv" ]; then rm -rf .venv; fi
 
-# Print help message
+# Print help
 help:
 	@echo "Makefile commands:"
-	@echo "  sync       Syncs dependencies with uv for the specified extra (e.g., cpu, rocm, cu124)"
-	@echo "  install    Installs the project in editable mode"
-	@echo "  clean      Removes the virtual environment"
-	@echo "  help       Displays this help message"
-	@echo "  test       (Commented out) Run tests"
-	@echo "  lint       (Commented out) Run linting"
+	@echo "  sync       Sync dependencies using uv for specified extra (cpu, rocm, cu124)"
+	@echo "  install    Install project in editable mode"
+	@echo "  clean      Remove virtual environment"
+	@echo "  help       Display this help message"
+	@echo "  test       (optional) Run tests"
+	@echo "  lint       (optional) Run linting"

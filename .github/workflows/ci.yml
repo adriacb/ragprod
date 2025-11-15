@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [development, main]
+  pull_request:
+    branches: [development, main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync dependencies from pyproject.toml
+        run: uv sync --extra cpu
+        working-directory: ragprod
+
+      - name: Install project in editable mode
+        run: uv run pip install -e .
+        working-directory: ragprod
+
+      - name: Install dev dependencies
+        if: github.ref == 'refs/heads/development'
+        run: uv sync --extra dev
+        working-directory: ragprod
+
+      - name: Lint with ruff
+        if: github.ref == 'refs/heads/development'
+        run: uv run ruff check src
+        working-directory: ragprod
+
+      - name: Run tests with coverage
+        if: github.ref == 'refs/heads/development'
+        run: |
+          uv run pytest -q --maxfail=1 --cov=mcpagent --cov-report=xml:coverage.xml
+        working-directory: mcpagent
+
+      - name: Upload coverage artifact
+        if: github.ref == 'refs/heads/development'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: mcpagent/coverage.xml
