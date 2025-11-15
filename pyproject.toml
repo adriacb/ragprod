@@ -32,18 +32,20 @@ dev    = ["ruff", "pytest", "pytest-cov"]
 cpu    = ["torch==2.5.0", "torchvision==0.20.0", "torchaudio==2.5.0"]
 cu124  = ["torch==2.5.0+cu124", "torchvision==0.20.0+cu124", "torchaudio==2.5.0+cu124"]
 
+[tool.uv]
+# No conflicts are needed — markers will handle selection
 [tool.uv.sources]
 torch = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu124", marker = "extra == 'cu124'" },
+    { package = "torch", index = "pytorch-cpu", marker = "extra == 'cpu'" },
+    { package = "torch", index = "pytorch-cu124", marker = "extra != 'cpu' and extra == 'cu124'" }
 ]
 torchvision = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu124", marker = "extra == 'cu124'" },
+    { package = "torchvision", index = "pytorch-cpu", marker = "extra == 'cpu'" },
+    { package = "torchvision", index = "pytorch-cu124", marker = "extra != 'cpu' and extra == 'cu124'" }
 ]
 torchaudio = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu124", marker = "extra == 'cu124'" },
+    { package = "torchaudio", index = "pytorch-cpu", marker = "extra == 'cpu'" },
+    { package = "torchaudio", index = "pytorch-cu124", marker = "extra != 'cpu' and extra == 'cu124'" }
 ]
 
 [[tool.uv.index]]
