@@ -1,6 +1,7 @@
 from ragprod.domain.document import Document
 from typing import List
-from ragprod.presentation.mcp.server import mcp, clientDB
+from ragprod.presentation.mcp.server import mcp
+from ..client import clientDB
 from fastmcp import Context
 
 @mcp.tool

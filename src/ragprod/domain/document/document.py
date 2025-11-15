@@ -1,10 +1,7 @@
 from pydantic import BaseModel
 from typing import Dict, Any, Union
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
-
-
 from .base import BaseDocument
 
 class Document(BaseModel, BaseDocument):

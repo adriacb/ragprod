@@ -2,7 +2,7 @@ from ragprod.domain.client.base import BaseClient
 from ragprod.domain.embedding.base import EmbeddingModel
 from ragprod.domain.document import Document
 
-from typing import List, Tuple, Dict, Any
+from typing import List, Dict, Any
 from qdrant_client import QdrantClient, models
 import logging
 
@@ -98,10 +98,6 @@ class QdrantRetriever(BaseClient):
     def embed_documents(self, documents: List[Document]) -> List[List[float]]:
         texts = [doc.raw_text for doc in documents]
         return self.embeddings.embed_documents(texts)
-
-    def get_embedding_size(self) -> int:
-        return self.embeddings.get_dimension()
-
 
     def retrieve(self, query: str, collection_name: str, limit: int = 5) -> List[Document]:
         try:

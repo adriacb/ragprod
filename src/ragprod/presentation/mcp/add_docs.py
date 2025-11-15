@@ -1,10 +1,10 @@
-import asyncio
-import uuid
-import torch
+# import asyncio
+# import uuid
+# import torch
 
-from ragprod.infrastructure.client import AsyncChromaDBClient
-from ragprod.domain.embedding.huggingface_embedding import HuggingFaceEmbedder
-from ragprod.domain.document import Document
+# from ragprod.infrastructure.client import AsyncChromaDBClient
+# from ragprod.domain.embedding.huggingface_embedding import HuggingFaceEmbedder
+# from ragprod.domain.document import Document
 
 # async def main():
 #     print("init embedder")

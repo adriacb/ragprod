@@ -1,9 +1,6 @@
-import os
 from fastmcp import FastMCP
-from .client import clientDB, embedder
-
-from fastmcp.server.auth.providers.github import GitHubProvider  # o el que elijas
-from dotenv import load_dotenv
+#from fastmcp.server.auth.providers.github import GitHubProvider  # o el que elijas
+#from dotenv import load_dotenv
 # load_dotenv(r'C:\Users\G1A-test\Documents\personal\tests\ragprod\.env')
 
 # print("==> client_id:", os.getenv("FASTMCP_SERVER_AUTH_GITHUB_CLIENT_ID"))
