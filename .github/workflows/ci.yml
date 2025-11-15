@@ -47,6 +47,7 @@ jobs:
         with:
           uv-version: "latest"
           enable-cache: true
+        run: uv --version
 
       # Runtime + project install
       - name: Sync runtime dependencies
