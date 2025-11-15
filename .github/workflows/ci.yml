@@ -50,18 +50,16 @@ jobs:
       - name: Check uv version
         run: uv --version
 
-      # Runtime dependencies (CPU only)
-      - name: Sync runtime dependencies (CPU)
-        run: uv sync --extra cpu
+      # Runtime + dev dependencies for tests
+      - name: Sync all needed dependencies
+        run: |
+          uv sync --extra cpu
+          # Install dev extras for testing on all branches
+          uv sync --extra dev
 
       # Install project
       - name: Install project
         run: uv pip install -e .
-
-      # Dev dependencies only on development branch
-      - name: Sync dev dependencies (CPU)
-        if: github.ref_name == 'development'
-        run: uv sync --extra dev --extra cpu
 
       # Run tests
       - name: Run tests
