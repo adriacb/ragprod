@@ -47,6 +47,8 @@ jobs:
         with:
           uv-version: "latest"
           enable-cache: true
+      
+      - name: Check uv version
         run: uv --version
 
       # Runtime + project install
