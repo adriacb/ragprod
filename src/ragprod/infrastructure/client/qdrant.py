@@ -2,10 +2,19 @@ from ragprod.domain.client.base import BaseClient
 from ragprod.domain.embedding.base import EmbeddingModel
 from ragprod.domain.document import Document
 
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
 from qdrant_client import QdrantClient, models
 import logging
 
+from pydantic import BaseModel
+
+class PointStruct(BaseModel):
+    id: int
+    vector: List[float]
+    payload: Dict[str, Any]
+
+    class Config:
+        from_attributes = True
 
 class QdrantRetriever(BaseClient):
     def __init__(self, host: str = "localhost", port: int = 6333, embedding_model: EmbeddingModel = None):
@@ -15,7 +24,6 @@ class QdrantRetriever(BaseClient):
         self.logger = logging.getLogger(__name__)
         self.embedding_model = embedding_model
     
-
     def _connect(self):
         try:
             return QdrantClient(host=self.host, port=self.port)

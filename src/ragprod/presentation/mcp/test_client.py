@@ -1,3 +1,7 @@
+from fastmcp.client.transports import StdioTransport
+
+
+import os
 import asyncio
 from fastmcp import Client
 from fastmcp.client.transports import StdioTransport
@@ -35,10 +39,11 @@ async def main():
     transport = StdioTransport(
         command="python",
         args=["src/ragprod/presentation/mcp/run.py"],
-        cwd="C:/Users/cabe/Documents/courses/DLAI/RAG/ragprod",
+        # fil
+        cwd=os.path.dirname(os.path.abspath(__file__))
     )
     client = Client(
-        transport,
+        transport=transport,
         log_handler=log_handler
         )
 

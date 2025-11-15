@@ -1,7 +1,7 @@
 from ragprod.domain.client.base import BaseClient
 from ragprod.domain.document import Document
 from ragprod.domain.embedding import EmbeddingModel
-from typing import List, Union, Callable
+from typing import List, Union, Callable, Any
 import faiss
 import numpy as np
 from langchain_community.docstore.in_memory import InMemoryDocstore

@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 def get_client(
-    persist_directory: Optional[str] = None,
-    api_host: Optional[str] = None,
-    api_port: Optional[int] = None,
-):
+        persist_directory: Optional[str] = None,
+        api_host: Optional[str] = None,
+        api_port: Optional[int] = None,
+    ):
     """
     Returns an appropriate Chroma client depending on parameters:
 

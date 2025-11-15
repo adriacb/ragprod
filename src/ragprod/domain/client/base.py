@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List
-from ragprod.core.document import BaseDocument
+from ragprod.domain.document.base import BaseDocument
 
 class BaseClient(ABC):
     @abstractmethod
