@@ -29,22 +29,18 @@ dependencies = [
 
 [project.optional-dependencies]
 dev    = ["ruff", "pytest", "pytest-cov"]
-cpu    = ["torch==2.5.0",        "torchvision==0.20.0",       "torchaudio==2.5.0"]
-cu124  = ["torch==2.5.0+cu124",  "torchvision==0.20.0+cu124", "torchaudio==2.5.0+cu124"]
+cpu    = ["torch==2.5.0", "torchvision==0.20.0", "torchaudio==2.5.0"]
+cu124  = ["torch==2.5.0+cu124", "torchvision==0.20.0+cu124", "torchaudio==2.5.0+cu124"]
 
-[tool.uv.sources]
-torch = [
-  { index = "pytorch-cpu",  extra = "cpu"   },
-  { index = "pytorch-cu124",extra = "cu124" },
-]
-torchvision = [
-  { index = "pytorch-cpu",  extra = "cpu"   },
-  { index = "pytorch-cu124",extra = "cu124" },
-]
-torchaudio = [
-  { index = "pytorch-cpu",  extra = "cpu"   },
-  { index = "pytorch-cu124",extra = "cu124" },
-]
+[tool.uv.sources.cpu]
+torch       = [{ index = "pytorch-cpu" }]
+torchvision = [{ index = "pytorch-cpu" }]
+torchaudio  = [{ index = "pytorch-cpu" }]
+
+[tool.uv.sources.cu124]
+torch       = [{ index = "pytorch-cu124" }]
+torchvision = [{ index = "pytorch-cu124" }]
+torchaudio  = [{ index = "pytorch-cu124" }]
 
 [[tool.uv.index]]
 name     = "pytorch-cpu"
