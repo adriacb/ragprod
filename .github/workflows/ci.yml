@@ -54,14 +54,15 @@ jobs:
       - name: Sync all needed dependencies
         run: |
           uv sync --extra cpu
-          # Install dev extras for testing on all branches
           uv sync --extra dev
 
       # Install project
       - name: Install project
         run: uv pip install -e .
 
+      # Run tests (ensure correct working directory)
       - name: Run tests
+        working-directory: ${{ github.workspace }}
         run: |
           uv run pytest tests -q --maxfail=1 \
             --cov=src \
