@@ -1,7 +1,8 @@
-from ragprod.domain.embedding import (
-    EmbeddingModel, 
-    HuggingFaceEmbedder,
-    OpenAIEmbedder
+from ragprod.domain.embedding import EmbeddingModel
+from ragprod.infrastructure.embeddings import (
+    HuggingFaceEmbeddings,
+    OpenAIEmbeddings,
+    ColBERTEmbeddings
 )
 from typing import Optional, Dict, Type, List
 import logging
@@ -38,7 +39,8 @@ class GetEmbeddingsService:
         """
         return {
             "huggingface": HuggingFaceEmbedder,
-            "openai": OpenAIEmbedder
+            "openai": OpenAIEmbedder,
+            "colbert": ColBERTEmbeddings
         }
 
     def get(self, embedding_model: str, config: Optional[dict] = None) -> EmbeddingModel:

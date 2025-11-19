@@ -2,9 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 
-class BaseChunk(ABC):
-
+class BaseChunker(ABC):
     @abstractmethod
-    def get_docid():
+    def chunk(self, **kwargs) -> List[str]:
         pass
-    
