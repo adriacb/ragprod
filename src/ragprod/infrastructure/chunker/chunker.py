@@ -1,6 +1,6 @@
-from .base import BaseChunker
 from typing import List
 from pydantic import BaseModel
+from .base import BaseChunker
 from ..document import Document
 
 class Chunker(BaseChunker, BaseModel):

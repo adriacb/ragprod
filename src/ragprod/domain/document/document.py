@@ -1,15 +1,16 @@
-from pydantic import BaseModel
+from dataclasses import dataclass, field
 from typing import Dict, Any, Union
 from rich.console import Console
 from rich.panel import Panel
 from .base import BaseDocument
 
-class Document(BaseModel, BaseDocument):
+@dataclass
+class Document(BaseDocument):
     id: str = None
-    raw_text: str
+    raw_text: str = ""
     source: str = "Unknown"
     title: str = "Untitled"
-    _metadata: Dict[str, Any] = {}  # <-- internal name
+    _metadata: Dict[str, Any] = field(default_factory=dict)
     distance: Union[float, None] = None
     score: Union[float, None] = None
 
@@ -49,4 +50,6 @@ class Document(BaseModel, BaseDocument):
 
         return ""  # Avoid default BaseModel repr
 
-
+    def __str__(self) -> str:
+        """Implement abstract method from BaseDocument."""
+        return self.content  # Or any string representation you want
