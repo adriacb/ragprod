@@ -1,5 +1,6 @@
 from .base import BaseChunk
 from dataclasses import dataclass
+from typing import List
 
 @dataclass
 class Chunk(BaseChunk):
