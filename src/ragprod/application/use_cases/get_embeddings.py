@@ -38,8 +38,8 @@ class GetEmbeddingsService:
             Dictionary mapping model names to model classes.
         """
         return {
-            "huggingface": HuggingFaceEmbedder,
-            "openai": OpenAIEmbedder,
+            "huggingface": HuggingFaceEmbeddings,
+            "openai": OpenAIEmbeddings,
             "colbert": ColBERTEmbeddings
         }
 
