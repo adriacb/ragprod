@@ -8,3 +8,14 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Env files
+docker/envs/
+.env
+
+# Cache
+.pytest_cache
+
+chromadb_test/
+
+uv.lock

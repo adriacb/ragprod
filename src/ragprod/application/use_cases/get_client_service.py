@@ -5,7 +5,7 @@ from ragprod.infrastructure.client import (
     # WeaviateClient
 )
 from typing import Dict, Type, Optional, List
-import logging
+from ragprod.infrastructure.logger import get_logger
 
 
 class GetClientService:
@@ -15,6 +15,7 @@ class GetClientService:
     This service provides a centralized way to instantiate different vector database
     clients (ChromaDB, Qdrant, Weaviate) based on configuration.
     """
+    _logger = get_logger()
     
     def __init__(self, enable_caching: bool = True):
         """
@@ -25,7 +26,6 @@ class GetClientService:
         """
         self._enable_caching = enable_caching
         self._cache: Dict[str, BaseClient] = {}
-        self._logger = logging.getLogger(__name__)
 
     @property
     def registry(self) -> Dict[str, Type[BaseClient]]:

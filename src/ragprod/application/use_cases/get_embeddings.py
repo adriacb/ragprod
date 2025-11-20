@@ -1,13 +1,11 @@
+from typing import Optional, Dict, Type, List
 from ragprod.domain.embedding import EmbeddingModel
 from ragprod.infrastructure.embeddings import (
     HuggingFaceEmbeddings,
     OpenAIEmbeddings,
     ColBERTEmbeddings
 )
-from typing import Optional, Dict, Type, List
-import logging
-
-logger = logging.getLogger(__name__)
+from ragprod.infrastructure.logger import get_logger
 
 
 class GetEmbeddingsService:
@@ -17,6 +15,7 @@ class GetEmbeddingsService:
     This service provides a centralized way to instantiate different embedding
     models (HuggingFace, OpenAI) based on configuration.
     """
+    _logger = get_logger()
     
     def __init__(self, enable_caching: bool = True):
         """
@@ -27,7 +26,6 @@ class GetEmbeddingsService:
         """
         self._enable_caching = enable_caching
         self._cache: Dict[str, EmbeddingModel] = {}
-        self._logger = logger
 
     @property
     def registry(self) -> Dict[str, Type[EmbeddingModel]]:
