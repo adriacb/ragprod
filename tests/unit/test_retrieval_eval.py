@@ -1,7 +1,6 @@
 import pytest
 from ragprod.infrastructure.evaluator import RetrievalEvaluator
 from ragprod.domain.document import Document
-from ragprod.domain.evaluator.retrieval_eval import RetrievalMetrics, BatchRetrievalMetrics
 
 
 class TestRetrievalEvaluator:

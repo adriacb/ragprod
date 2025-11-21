@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Dict, Optional
 from dataclasses import dataclass
 from ragprod.domain.document.base import BaseDocument
 
