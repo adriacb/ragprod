@@ -19,14 +19,14 @@ install: sync
 	uv pip install -e .
 
 # Target for running tests (optional)
-# test:
-#	@echo "Running tests..."
-#	pytest
+test:
+	@echo "Running tests..."
+	uv run --extra dev pytest .\tests\
 
 # Target for linting (optional)
-# lint:
-#	@echo "Running linting..."
-#	flake8 .
+lint:
+	@echo "Running linting..."
+	uv run --extra dev ruff check src
 
 # Clean virtual environment
 clean:

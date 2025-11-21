@@ -115,12 +115,14 @@ class LoggerProxy:
         """Access the current underlying BoundLogger if needed for advanced use."""
         return structlog.get_logger()
 
-def get_logger(config: dict | None):
+def get_logger(name: str | None = None, config: dict | None = None):
     if not config:
-        return LoggerInitializer.get_default_logger()
-    
-    return LoggerConfig.initialize(
-            LoggerConfig(
-                **config
-            )
-        )
+        logger = LoggerInitializer.get_default_logger()
+    else:
+        logger = LoggerInitializer.initialize(LoggerConfig(**config))
+
+    # Bind module name to logger
+    if name:
+        return logger.bind(logger_name=name)
+
+    return logger

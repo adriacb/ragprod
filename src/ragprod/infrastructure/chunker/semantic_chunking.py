@@ -4,13 +4,13 @@ from typing import List
 #from ..document import Document
 from ragprod.domain.embedding import EmbeddingModel
 from ragprod.domain.chunk import Chunk
-import logging
+from ragprod.infrastructure.logger import get_logger
 
 
 
 class SemanticChunker(BaseChunker, BaseModel):
     
-    logger = logging.getLogger(__name__) 
+    logger = get_logger(__name__) 
     
     def __init__(self, 
             embedding_model: EmbeddingModel,
