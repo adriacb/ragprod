@@ -10,9 +10,28 @@ class Document(BaseDocument):
     raw_text: str = ""
     source: str = "Unknown"
     title: str = "Untitled"
-    _metadata: Dict[str, Any] = field(default_factory=dict)
+    _metadata: Dict[str, Any] = field(default_factory=dict, init=False, repr=False)
     distance: Union[float, None] = None
     score: Union[float, None] = None
+
+    def __init__(
+        self,
+        id: str = None,
+        raw_text: str = "",
+        source: str = "Unknown",
+        title: str = "Untitled",
+        metadata: Dict[str, Any] = None,
+        distance: Union[float, None] = None,
+        score: Union[float, None] = None,
+    ):
+        """Initialize Document with metadata parameter."""
+        self.id = id
+        self.raw_text = raw_text
+        self.source = source
+        self.title = title
+        self.distance = distance
+        self.score = score
+        self._metadata = metadata.copy() if metadata else {}
 
     @property
     def metadata(self) -> Dict[str, Any]:
