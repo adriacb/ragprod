@@ -1,11 +1,24 @@
 from typing import List
 from pydantic import BaseModel
 from .base import BaseChunker
-from ..document import Document
+from ragprod.domain.document import Document
 
 class Chunker(BaseChunker, BaseModel):
+    """Legacy chunker class for backward compatibility."""
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    
+    def split_text(self, text: str) -> List[str]:
+        """Implement split_text for BaseTextSplitter interface."""
+        # Use word-based splitting as default
+        words = text.split()
+        chunk_size = 100  # Default chunk size in words
+        chunks = []
+        for i in range(0, len(words), chunk_size):
+            chunk_words = words[i:i + chunk_size]
+            chunks.append(" ".join(chunk_words))
+        return chunks
         
     def chunk_fixed_size(self, Document: Document, chunk_size: int) -> List[Document]:
         """Chunk the document into fixed size chunks.
