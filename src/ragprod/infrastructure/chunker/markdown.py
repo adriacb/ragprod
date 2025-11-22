@@ -136,7 +136,7 @@ class MarkdownHeaderTextSplitter(BaseTextSplitter):
                 if line.strip().startswith(header_level + " "):
                     # Found a header
                     header_text = line.strip()[len(header_level) :].strip()
-                    pos = sum(len(l) + 1 for l in lines[:line_num])  # +1 for newline
+                    pos = sum(len(x) + 1 for x in lines[:line_num])  # +1 for newline
 
                     # Update header hierarchy
                     # Clear headers at same or deeper level
