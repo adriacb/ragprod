@@ -2,7 +2,6 @@ import math
 from typing import List, Optional, Literal
 from .base import BaseTextSplitter
 from ragprod.domain.embedding import EmbeddingModel
-from ragprod.domain.document.base import BaseDocument
 
 
 class SemanticChunker(BaseTextSplitter):

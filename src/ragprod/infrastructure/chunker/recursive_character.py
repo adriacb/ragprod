@@ -1,6 +1,5 @@
 from typing import List, Optional
 from .base import BaseTextSplitter
-from ragprod.domain.document.base import BaseDocument
 
 
 class RecursiveCharacterTextSplitter(BaseTextSplitter):
