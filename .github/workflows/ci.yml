@@ -56,8 +56,8 @@ jobs:
       # Runtime + dev dependencies for tests
       - name: Sync all needed dependencies
         run: |
-          uv sync --extra cpu
-          uv sync --extra dev
+          uv sync --extra cpu --extra fastapi --extra mcp
+          uv sync --extra dev --extra fastapi --extra mcp
 
       # Install project
       - name: Install project
