@@ -20,3 +20,4 @@ chromadb_test/*
 scripts/
 
 uv.lock
+mcp.py
