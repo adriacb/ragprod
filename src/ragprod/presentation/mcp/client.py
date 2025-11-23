@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 from ragprod.application.use_cases import GetClientService, GetEmbeddingsService
 from ragprod.infrastructure.logger import get_logger
 
