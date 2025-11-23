@@ -1,4 +1,5 @@
 from fastmcp import FastMCP
+from ragprod.presentation.mcp.lifespan.manager import lifespan
 #from fastmcp.server.auth.providers.github import GitHubProvider  # o el que elijas
 #from dotenv import load_dotenv
 # load_dotenv(r'C:\Users\G1A-test\Documents\personal\tests\ragprod\.env')
@@ -19,6 +20,6 @@ mcp = FastMCP(
     version="0.0.1",
     #log_level=,
     debug=True,
-    #lifespan=lifespan,
+    lifespan=lifespan,
     #auth=auth
 )
