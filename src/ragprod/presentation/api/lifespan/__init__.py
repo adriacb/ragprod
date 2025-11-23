@@ -1,0 +1,1 @@
+# Lifespan management for FastAPI
