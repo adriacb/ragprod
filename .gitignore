@@ -16,6 +16,7 @@ docker/envs/
 # Cache
 .pytest_cache
 
-chromadb_test/
+chromadb_test/*
+scripts/
 
 uv.lock
