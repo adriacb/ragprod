@@ -1,26 +1,39 @@
-# RAGProd
+# RAGProd 🚀
 
-**RAGProd** is a production-ready **Retrieval-Augmented Generation (RAG)** system built with clean architecture principles. It provides a modular, extensible framework for building RAG applications with support for multiple vector databases, embedding models, and monitoring tools.
+**RAGProd** is a production-ready **Retrieval-Augmented Generation (RAG)** system built with clean architecture principles. It provides a modular, extensible framework for building RAG applications with support for multiple vector databases, embedding models, chunking strategies, and flexible deployment options.
 
 ## 🎯 What is RAGProd?
 
 RAGProd is a comprehensive RAG framework that enables you to:
 
-- **Ingest and store documents** in vector databases with automatic chunking and embedding
+- **Ingest and store documents** with automatic chunking using multiple strategies
 - **Retrieve relevant documents** using semantic search across multiple vector database backends
 - **Support multiple embedding models** (HuggingFace, OpenAI, ColBERT)
+- **Deploy flexibly** via FastAPI REST API or Model Context Protocol (MCP)
+- **Connect to local or cloud databases** (ChromaDB, Weaviate)
 - **Monitor and evaluate** RAG performance with integrated observability tools
-- **Expose RAG capabilities** via Model Context Protocol (MCP) for easy integration with AI applications
 
 The system follows clean architecture patterns, making it easy to extend, test, and maintain while supporting production deployments.
 
 ## ✨ Key Features
 
+### 🌐 Dual Presentation Layer
+- **FastAPI** - RESTful API with automatic OpenAPI documentation
+- **FastMCP** - Model Context Protocol for AI application integration
+- Both support the same underlying RAG capabilities
+
 ### 🗄️ Multi-Vector Database Support
 - **ChromaDB** - Local persistent storage or remote API
+- **Weaviate** - Local, self-hosted, or Weaviate Cloud
 - **FAISS** - High-performance similarity search
 - **Qdrant** - Production-ready vector database
-- **Weaviate** - Cloud-native vector database
+
+### ✂️ Advanced Document Chunking
+- **Recursive Character** - Smart text splitting with separators (recommended)
+- **Character** - Simple character-based splitting
+- **Token** - Token-aware splitting for LLM context limits
+- **Markdown** - Structure-aware markdown splitting
+- **Semantic** - Similarity-based semantic chunking
 
 ### 🤖 Multiple Embedding Models
 - **HuggingFace Transformers** - Open-source embedding models
@@ -35,36 +48,37 @@ The system follows clean architecture patterns, making it easy to extend, test, 
 ### 🏗️ Clean Architecture
 - **Domain Layer** - Core business logic and entities
 - **Infrastructure Layer** - External service integrations
-- **Application Layer** - Use cases and services
-- **Presentation Layer** - MCP server and API interfaces
+- **Application Layer** - Use cases and services (GetChunkerService, GetClientService)
+- **Presentation Layer** - FastAPI and MCP interfaces
 
 ### 🔧 Production-Ready Features
 - Structured logging with `structlog`
-- Configuration management with environment variables
+- Environment-based configuration
 - Async/await support throughout
-- Comprehensive unit tests
-- Docker support for containerized deployments
+- Comprehensive unit and integration tests
+- Docker support with multiple deployment scenarios
+- Automatic semantic versioning with CI/CD
 
 ## 🏛️ Architecture Overview
 
-RAGProd follows a clean architecture pattern with clear separation of concerns:
-
 ```
 ┌─────────────────────────────────────────────────────────┐
-│              Presentation Layer (MCP/API)                │
-│  ┌───────────────────────────────────────────────────┐  │
-│  │  MCP Server (FastMCP)                              │  │
-│  │  - rag_retrieve()                                  │  │
-│  │  - add_documents()                                 │  │
-│  └───────────────────────────────────────────────────┘  │
+│         Presentation Layer (FastAPI & MCP)               │
+│  ┌──────────────┐              ┌──────────────┐        │
+│  │  FastAPI     │              │  FastMCP     │        │
+│  │  :8000       │              │  :8002       │        │
+│  │  - /rag/add  │              │  - add_docs  │        │
+│  │  - /rag/ret  │              │  - retrieve  │        │
+│  └──────────────┘              └──────────────┘        │
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
 │              Application Layer                           │
 │  ┌───────────────────────────────────────────────────┐  │
 │  │  Use Cases & Services                             │  │
-│  │  - get_client_service()                           │  │
-│  │  - get_embeddings()                               │  │
+│  │  - GetChunkerService (factory + caching)          │  │
+│  │  - GetClientService (factory + caching)           │  │
+│  │  - GetEmbeddingsService                           │  │
 │  └───────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────┘
                           ↓
@@ -73,21 +87,16 @@ RAGProd follows a clean architecture pattern with clear separation of concerns:
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
 │  │  Documents   │  │  Embeddings   │  │   Chunkers    │ │
 │  └──────────────┘  └──────────────┘  └──────────────┘ │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │  Evaluators  │  │   Encoders    │  │   Prompts     │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘ │
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
 │              Infrastructure Layer                        │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │  Vector DBs  │  │  Embeddings   │  │  Monitoring   │ │
-│  │  Clients     │  │  Providers    │  │  Tools        │ │
+│  │  ChromaDB    │  │  Weaviate     │  │  HuggingFace  │ │
+│  │  Clients     │  │  Clients      │  │  Embeddings   │ │
 │  └──────────────┘  └──────────────┘  └──────────────┘ │
 └─────────────────────────────────────────────────────────┘
 ```
-
-For detailed architecture documentation, see [docs/architecture.md](docs/architecture.md).
 
 ## 🚀 Quick Start
 
@@ -95,6 +104,7 @@ For detailed architecture documentation, see [docs/architecture.md](docs/archite
 
 - Python 3.12+
 - [UV](https://github.com/astral-sh/uv) package manager
+- Docker (optional, for containerized deployment)
 
 ### Installation
 
@@ -121,66 +131,128 @@ For detailed architecture documentation, see [docs/architecture.md](docs/archite
    make install
    ```
 
-### Configuration
+### Running the FastAPI Server
 
-1. **Copy environment file templates:**
-   ```bash
-   cp envs/api.env.example envs/api.env
-   cp envs/langfuse.env.example envs/langfuse.env
-   ```
+```bash
+# Run with default settings
+uv run python -m ragprod.presentation.api.run
 
-2. **Configure your environment variables:**
-   - Edit `envs/api.env` for API settings
-   - Edit `envs/langfuse.env` for monitoring (optional)
+# Run with specific environment file
+uv run python -m ragprod.presentation.api.run --env envs/api.local.env
+
+# Run with auto-reload for development
+uv run python -m ragprod.presentation.api.run --reload
+
+# Access API documentation
+# Open http://localhost:8000/docs in your browser
+```
 
 ### Running the MCP Server
-
-Start the MCP server to expose RAG capabilities:
 
 ```bash
 python -m ragprod.presentation.mcp.run
 ```
 
-The server exposes tools for:
-- `rag_retrieve(query, limit)` - Retrieve documents by semantic similarity
-- `add_documents(documents)` - Add documents to the vector database
+## 🐳 Docker Deployment
+
+RAGProd supports multiple deployment scenarios with Docker:
+
+### Local Development (ChromaDB)
+```bash
+# Start FastAPI with local ChromaDB
+docker-compose --profile api up
+
+# Start MCP with local ChromaDB
+docker-compose --profile mcp up
+```
+
+### Production (External Weaviate)
+```bash
+# Start FastAPI with external Weaviate
+docker-compose --profile api-external up
+
+# Start MCP with external Weaviate
+docker-compose --profile mcp-external up
+```
+
+### Hybrid Setup
+```bash
+# API → Local ChromaDB, MCP → External Weaviate
+docker-compose --profile api --profile mcp-external up
+```
+
+For detailed deployment options, see [Docker Deployment Guide](docs/docker_deployment.md) and [Quick Reference](docs/docker_quick_reference.md).
 
 ## 📖 Usage Examples
 
-### Using the MCP Server
+### FastAPI REST API
 
-The MCP server can be integrated with AI applications that support the Model Context Protocol. It provides RAG retrieval capabilities as tools that can be called by LLMs.
+```bash
+# Add documents with chunking
+curl -X POST http://localhost:8000/rag/add_documents \
+  -H "Content-Type: application/json" \
+  -d '{
+    "documents": [
+      {
+        "raw_text": "Your document text here...",
+        "source": "document.txt"
+      }
+    ],
+    "chunker_name": "recursive_character",
+    "chunker_config": {
+      "chunk_size": 1000,
+      "chunk_overlap": 200
+    }
+  }'
+
+# Retrieve documents
+curl -X POST http://localhost:8000/rag/retrieve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "search query",
+    "limit": 5
+  }'
+```
+
+For more examples, see [API Usage Guide](docs/api_usage.md).
 
 ### Programmatic Usage
 
 ```python
-from ragprod.application.use_cases import get_client_service, get_embeddings
+from ragprod.application.use_cases import GetClientService, GetChunkerService
 from ragprod.domain.document import Document
 
-# Get a vector database client
-client = await get_client_service(
-    mode="local_persistent",
-    collection_name="my_documents"
-)
+# Initialize services
+client_service = GetClientService()
+chunker_service = GetChunkerService()
 
-# Get an embedding model
-embedder = get_embeddings(model_type="huggingface", model_name="sentence-transformers/all-MiniLM-L6-v2")
+# Get database client
+client = client_service.get("chroma", {
+    "persist_directory": "./chromadb_data",
+    "collection_name": "my_documents"
+})
 
-# Create and add documents
+# Get chunker
+chunker = chunker_service.get("recursive_character", {
+    "chunk_size": 1000,
+    "chunk_overlap": 200
+})
+
+# Create and chunk documents
 documents = [
     Document(
-        raw_text="Your document text here",
-        source="example",
-        title="Example Document"
+        raw_text="Your long document text here...",
+        source="example.txt"
     )
 ]
 
-await client.add_documents(documents)
+chunks = chunker.split_documents(documents)
+await client.add_documents(chunks)
 
 # Retrieve similar documents
 results = await client.retrieve("search query", limit=5)
 for doc in results:
-    print(f"{doc.title}: {doc.content}")
+    print(f"{doc.source}: {doc.raw_text}")
 ```
 
 ## 🧪 Testing
@@ -188,15 +260,67 @@ for doc in results:
 Run the test suite:
 
 ```bash
+# Run all tests
 make test
+
+# Run specific test files
+uv run --extra=dev pytest tests/unit/test_get_chunker_service.py -v
+uv run --extra=dev pytest tests/integration/test_api.py -v
+
+# Run with coverage
+uv run --extra=dev pytest --cov=ragprod tests/
 ```
 
-Or run specific test files:
+**Test Coverage:**
+- ✅ Unit tests for GetChunkerService
+- ✅ Integration tests for FastAPI endpoints
+- ✅ Integration tests for MCP tools
 
-```bash
-uv run --extra dev pytest tests/unit/test_logger.py -v
-uv run --extra dev pytest tests/unit/test_config.py -v
+## 🔧 Configuration
+
+### Environment Files
+
+RAGProd uses environment files for configuration. Examples are provided in `envs/`:
+
+- `api.local.env` - FastAPI with local ChromaDB
+- `api.external.env` - FastAPI with external Weaviate
+- `mcp.local.env` - MCP with local ChromaDB
+- `mcp.external.env` - MCP with external Weaviate
+
+### Key Environment Variables
+
+#### Database Configuration
+```env
+DB_TYPE=chroma              # Options: chroma, weaviate
+DB_MODE=local               # Options: local, remote
+
+# ChromaDB
+CHROMA_PERSIST_DIRECTORY=./chromadb_data
+CHROMA_COLLECTION_NAME=ragprod
+
+# Weaviate
+WEAVIATE_URL=https://your-cluster.weaviate.network
+WEAVIATE_API_KEY=your-api-key
 ```
+
+#### Embedding Configuration
+```env
+EMBEDDING_PROVIDER=huggingface
+EMBEDDING_MODEL_NAME=jinaai/jina-code-embeddings-0.5b
+EMBEDDING_DEVICE=cpu
+EMBEDDING_DTYPE=bfloat16
+```
+
+#### FastAPI Configuration
+```env
+FASTAPI_HOST=0.0.0.0
+FASTAPI_PORT=8000
+FASTAPI_WORKERS=1
+FASTAPI_RELOAD=True
+LOG_LEVEL=INFO
+```
+
+For complete configuration options, see the environment file examples in `envs/`.
 
 ## 🛠️ Development
 
@@ -207,12 +331,22 @@ ragprod/
 ├── src/ragprod/
 │   ├── domain/              # Core business logic
 │   ├── infrastructure/      # External integrations
+│   │   ├── client/          # Vector DB clients
+│   │   ├── chunker/         # Text splitting strategies
+│   │   ├── embeddings/      # Embedding providers
+│   │   └── config/          # Configuration management
 │   ├── application/         # Use cases and services
-│   └── presentation/        # MCP server and API
-├── tests/                   # Unit tests
+│   │   └── use_cases/       # GetChunkerService, GetClientService
+│   └── presentation/        # API interfaces
+│       ├── api/             # FastAPI application
+│       └── mcp/             # FastMCP server
+├── tests/
+│   ├── unit/                # Unit tests
+│   └── integration/         # Integration tests
 ├── docs/                    # Documentation
-├── notebooks/              # Jupyter notebooks
-└── envs/                   # Environment configuration
+├── docker/                  # Docker configurations
+├── envs/                    # Environment files
+└── notebooks/              # Jupyter notebooks
 ```
 
 ### Available Make Commands
@@ -229,29 +363,15 @@ ragprod/
 1. **Vector Database**: Implement `BaseClient` in `infrastructure/client/`
 2. **Embedding Model**: Implement `BaseEmbedding` in `infrastructure/embeddings/`
 3. **Chunking Strategy**: Implement `BaseChunker` in `infrastructure/chunker/`
-4. **MCP Tool**: Add new tool in `presentation/mcp/tools/`
-
-## 🔧 Configuration
-
-### Environment Variables
-
-#### API Configuration (`envs/api.env`)
-- `FASTAPI_HOST` - API host (default: `0.0.0.0`)
-- `FASTAPI_PORT` - API port (default: `8000`)
-- `FASTAPI_WORKERS` - Number of workers (default: `1`)
-- `FASTAPI_RELOAD` - Enable auto-reload (default: `True`)
-
-#### Langfuse Configuration (`envs/langfuse.env`)
-- `LANGFUSE_PUBLIC_KEY` - Langfuse public key (required)
-- `LANGFUSE_SECRET_KEY` - Langfuse secret key (required)
-- `LANGFUSE_HOST` - Langfuse host (default: `https://cloud.langfuse.com`)
-- `LANGFUSE_TAGS` - Comma-separated tags or JSON array
-
-#### Logging
-- `LOG_LEVEL` - Logging level (DEBUG, INFO, WARNING, ERROR)
+4. **API Endpoint**: Add route in `presentation/api/routes/`
+5. **MCP Tool**: Add tool in `presentation/mcp/tools/`
 
 ## 📚 Documentation
 
+- [API Usage Guide](docs/api_usage.md) - Complete FastAPI usage examples
+- [Docker Deployment](docs/docker_deployment.md) - Comprehensive deployment guide
+- [Docker Quick Reference](docs/docker_quick_reference.md) - Quick commands and diagrams
+- [Versioning & Release](docs/how_to_versioning_release.md) - CI/CD and semantic versioning
 - [Architecture Documentation](docs/architecture.md) - Detailed architecture overview
 - [Notebooks](notebooks/) - Example notebooks and tutorials
 
@@ -259,17 +379,35 @@ ragprod/
 
 - **Python 3.12+** - Programming language
 - **UV** - Fast Python package manager
+- **FastAPI** - Modern web framework for APIs
+- **FastMCP** - Model Context Protocol framework
 - **Pydantic** - Data validation
 - **Structlog** - Structured logging
-- **FastMCP** - Model Context Protocol framework
-- **ChromaDB/FAISS/Qdrant/Weaviate** - Vector databases
+- **ChromaDB/Weaviate** - Vector databases
 - **HuggingFace Transformers** - Embedding models
-- **OpenAI** - GPT embeddings
-- **Langfuse/LangSmith/Phoenix** - Monitoring tools
+- **Docker & Docker Compose** - Containerization
+- **pytest** - Testing framework
+- **python-semantic-release** - Automated versioning
+
+## 🚢 CI/CD
+
+RAGProd includes automated semantic versioning:
+
+- **Conventional Commits** - Use `feat:`, `fix:`, `refactor!:` for automatic version bumps
+- **GitHub Actions** - Automated releases on push to `main`
+- **Changelog Generation** - Automatic changelog updates
+
+See [Versioning Guide](docs/how_to_versioning_release.md) for details.
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes using conventional commits (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📝 License
 
@@ -282,4 +420,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-For more information, see the [architecture documentation](docs/architecture.md).
+For more information, see the [documentation](docs/).

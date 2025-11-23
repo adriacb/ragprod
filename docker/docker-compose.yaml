@@ -1,60 +1,176 @@
+version: '3.8'
+
+networks:
+  ragprod_network:
+    driver: bridge
+
+volumes:
+  chromadb_data:
+  weaviate_data:
+
+
 services:
-  mcp:
-    build:
-      context: .
-      dockerfile: docker/mcp.Dockerfile
-      args:
-        ENV: ${ENV:-dev}       # Default environment
-        EXTRA: ${EXTRA:-cpu}   # Default extra (cpu, cu124, rocm)
-    container_name: ragprod_mcp
-    volumes:
-      - .:/app
+  # ============================================
+  # Local ChromaDB Service
+  # ============================================
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: ragprod_chromadb
+    profiles: [ "local", "all" ]
     ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    restart: unless-stopped
+      - "8001:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
     networks:
       - ragprod_network
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia      # Use `nvidia` for CUDA GPUs (optional for ROCm)
-              capabilities: [gpu]
+    restart: unless-stopped
 
+  # ============================================
+  # Local Weaviate Service (optional)
+  # ============================================
+  weaviate:
+    image: semitechnologies/weaviate:latest
+    container_name: ragprod_weaviate
+    profiles: [ "weaviate-local", "all" ]
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_MODULES: ''
+      CLUSTER_HOSTNAME: 'node1'
+    networks:
+      - ragprod_network
+    restart: unless-stopped
+
+  # ============================================
+  # FastAPI Service
+  # ============================================
   api:
     build:
       context: .
       dockerfile: docker/api.Dockerfile
       args:
-        ENV: ${ENV:-dev}       # Default environment
-        EXTRA: ${EXTRA:-cpu}   # Default extra (cpu, cu124, rocm)
+        EXTRA: ${EXTRA:-cpu}
     container_name: ragprod_api
-    volumes:
-      - .:/app
+    profiles: [ "api", "all" ]
     ports:
-      - "8001:8001"
-    depends_on:
-      - db
-    restart: unless-stopped
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - ./src:/app/src
+      - ./envs:/app/envs
+      - chromadb_data:/app/chromadb_data
+    env_file:
+      - ${API_ENV_FILE:-envs/api.local.env}
     networks:
       - ragprod_network
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia      # Use `nvidia` for CUDA GPUs (optional for ROCm)
-              capabilities: [gpu]
+    restart: unless-stopped
+    depends_on:
+      - chromadb
+    command: >
+      sh -c "uv run python -m ragprod.presentation.api.run  --host 0.0.0.0  --port 8000  --env ${API_ENV_FILE:-envs/api.local.env}"
 
-  db:
+  # ============================================
+  # FastAPI Service (External DB)
+  # ============================================
+  api-external:
     build:
       context: .
-      dockerfile: docker/db.Dockerfile
+      dockerfile: docker/api.Dockerfile
       args:
-        ENV: ${ENV:-dev}       # Default environment
-        EXTRA: ${EXTRA:-cpu}   # Default extra (cpu, cu124, rocm)
-    container_name: ragprod_db
+        EXTRA: ${EXTRA:-cpu}
+    container_name: ragprod_api_external
+    profiles: [ "api-external" ]
+    ports:
+      - "${API_PORT:-8000}:8000"
     volumes:
-      - .:/app
-#  docker-compose build --build-arg ENV=prod --build-arg EXTRA=rocm
+      - ./src:/app/src
+      - ./envs:/app/envs
+    env_file:
+      - ${API_ENV_FILE:-envs/api.external.env}
+    networks:
+      - ragprod_network
+    restart: unless-stopped
+    command: >
+      sh -c "uv run python -m ragprod.presentation.api.run  --host 0.0.0.0  --port 8000  --env ${API_ENV_FILE:-envs/api.external.env}"
+
+  # ============================================
+  # MCP Service
+  # ============================================
+  mcp:
+    build:
+      context: .
+      dockerfile: docker/mcp.Dockerfile
+      args:
+        EXTRA: ${EXTRA:-cpu}
+    container_name: ragprod_mcp
+    profiles: [ "mcp", "all" ]
+    ports:
+      - "${MCP_PORT:-8002}:8000"
+    volumes:
+      - ./src:/app/src
+      - ./envs:/app/envs
+      - chromadb_data:/app/chromadb_data
+    env_file:
+      - ${MCP_ENV_FILE:-envs/mcp.local.env}
+    networks:
+      - ragprod_network
+    restart: unless-stopped
+    depends_on:
+      - chromadb
+
+  # ============================================
+  # MCP Service (External DB)
+  # ============================================
+  mcp-external:
+    build:
+      context: .
+      dockerfile: docker/mcp.Dockerfile
+      args:
+        EXTRA: ${EXTRA:-cpu}
+    container_name: ragprod_mcp_external
+    profiles: [ "mcp-external" ]
+    ports:
+      - "${MCP_PORT:-8002}:8000"
+    volumes:
+      - ./src:/app/src
+      - ./envs:/app/envs
+    env_file:
+      - ${MCP_ENV_FILE:-envs/mcp.external.env}
+    networks:
+      - ragprod_network
+    restart: unless-stopped
+
+# ============================================
+# Usage Examples:
+# ============================================
+#
+# 1. Run API with local ChromaDB:
+#    docker-compose --profile api up
+#
+# 2. Run API with external Weaviate:
+#    docker-compose --profile api-external up
+#
+# 3. Run MCP with local ChromaDB:
+#    docker-compose --profile mcp up
+#
+# 4. Run MCP with external Weaviate:
+#    docker-compose --profile mcp-external up
+#
+# 5. Run both API and MCP with local DB:
+#    docker-compose --profile api --profile mcp up
+#
+# 6. Run everything (all services):
+#    docker-compose --profile all up
+#
+# 7. Custom env file:
+#    API_ENV_FILE=envs/api.custom.env docker-compose --profile api up
+#
