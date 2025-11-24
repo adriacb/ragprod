@@ -425,7 +425,8 @@ RAGProd implements state-of-the-art retrieval techniques based on recent researc
 
 ### Hybrid Search & Dynamic Weighting
 - **Dynamic Alpha Tuning (DAT)**  
-  Implemented based on hybrid search best practices and LLM-based effectiveness evaluation
+  Hsu & Tzeng, 2025 - [arXiv:2503.23013](https://arxiv.org/abs/2503.23013)  
+  *Dynamically balances dense and sparse retrieval using LLM-based effectiveness evaluation*
 
 ### Advanced RAG Techniques
 - **Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection**  
