@@ -18,6 +18,7 @@ docker/envs/
 .ruff_cache
 
 chromadb_test/*
+chromadb_data/
 scripts/
 
 uv.lock

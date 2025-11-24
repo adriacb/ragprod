@@ -45,6 +45,13 @@ The system follows clean architecture patterns, making it easy to extend, test, 
 - **LangSmith** - LangChain monitoring
 - **Phoenix** - Open-source LLM observability
 
+### 🔍 Advanced Retrieval Strategies
+- **Dense Retrieval** - Semantic search using vector embeddings (default)
+- **DAT (Dynamic Alpha Tuning)** - Hybrid retrieval with LLM-based dynamic weighting
+- **Future**: GraphRAG, Self-RAG, Long RAG support planned
+
+See [Retrieval Strategies Documentation](docs/retrieval_strategies/) for details.
+
 ### 🏗️ Clean Architecture
 - **Domain Layer** - Core business logic and entities
 - **Infrastructure Layer** - External service integrations
@@ -369,6 +376,7 @@ ragprod/
 ## 📚 Documentation
 
 - [API Usage Guide](docs/api_usage.md) - Complete FastAPI usage examples
+- [Retrieval Strategies](docs/retrieval_strategies/) - Advanced retrieval methods (DAT, hybrid search)
 - [Docker Deployment](docs/docker_deployment.md) - Comprehensive deployment guide
 - [Docker Quick Reference](docs/docker_quick_reference.md) - Quick commands and diagrams
 - [Versioning & Release](docs/how_to_versioning_release.md) - CI/CD and semantic versioning
@@ -398,6 +406,40 @@ RAGProd includes automated semantic versioning:
 - **Changelog Generation** - Automatic changelog updates
 
 See [Versioning Guide](docs/how_to_versioning_release.md) for details.
+
+## 📖 Academic References
+
+RAGProd implements state-of-the-art retrieval techniques based on recent research:
+
+### Retrieval-Augmented Generation
+- **RAG: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks**  
+  Lewis et al., 2020 - [arXiv:2005.11401](https://arxiv.org/abs/2005.11401)
+
+### Dense Retrieval
+- **Dense Passage Retrieval for Open-Domain Question Answering**  
+  Karpukhin et al., 2020 - [arXiv:2004.04906](https://arxiv.org/abs/2004.04906)
+
+### Sparse Retrieval (BM25)
+- **Okapi BM25**  
+  Robertson & Zaragoza, 2009 - [The Probabilistic Relevance Framework: BM25 and Beyond](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)
+
+### Hybrid Search & Dynamic Weighting
+- **Dynamic Alpha Tuning (DAT)**  
+  Implemented based on hybrid search best practices and LLM-based effectiveness evaluation
+
+### Advanced RAG Techniques
+- **Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection**  
+  Asai et al., 2023 - [arXiv:2310.11511](https://arxiv.org/abs/2310.11511)
+
+- **Graph RAG: Unlocking LLM Discovery on Narrative Private Data**  
+  Microsoft Research, 2024 - [arXiv:2404.16130](https://arxiv.org/abs/2404.16130)
+
+### Embedding Models
+- **ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction**  
+  Khattab & Zaharia, 2020 - [arXiv:2004.12832](https://arxiv.org/abs/2004.12832)
+
+- **Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks**  
+  Reimers & Gurevych, 2019 - [arXiv:1908.10084](https://arxiv.org/abs/1908.10084)
 
 ## 🤝 Contributing
 
