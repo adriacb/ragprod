@@ -206,6 +206,41 @@ All strategies log:
 
 ## References
 
-- [Dense Passage Retrieval Paper](https://arxiv.org/abs/2004.04906)
-- [BM25 Algorithm](https://en.wikipedia.org/wiki/Okapi_BM25)
-- [Hybrid Search Best Practices](https://www.pinecone.io/learn/hybrid-search/)
+### Foundational Papers
+
+**Retrieval-Augmented Generation (RAG)**
+- Lewis, P., Perez, E., Piktus, A., et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"  
+  *NeurIPS 2020* - [arXiv:2005.11401](https://arxiv.org/abs/2005.11401)
+
+**Dense Passage Retrieval (DPR)**
+- Karpukhin, V., Oguz, B., Min, S., et al. (2020). "Dense Passage Retrieval for Open-Domain Question Answering"  
+  *EMNLP 2020* - [arXiv:2004.04906](https://arxiv.org/abs/2004.04906)
+
+**BM25 (Sparse Retrieval)**
+- Robertson, S., & Zaragoza, H. (2009). "The Probabilistic Relevance Framework: BM25 and Beyond"  
+  *Foundations and Trends in Information Retrieval* - [PDF](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)
+
+### Advanced RAG Techniques
+
+**Dynamic Alpha Tuning (DAT)**
+- Hsu, H.-L., & Tzeng, J. (2025). "DAT: Dynamic Alpha Tuning for Hybrid Retrieval in Retrieval-Augmented Generation"  
+  *arXiv preprint* - [arXiv:2503.23013](https://arxiv.org/abs/2503.23013)
+
+**Self-RAG: Self-Reflective Retrieval**
+- Asai, A., Wu, Z., Wang, Y., et al. (2023). "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"  
+  *arXiv preprint* - [arXiv:2310.11511](https://arxiv.org/abs/2310.11511)
+
+**Graph RAG**
+- Microsoft Research (2024). "Graph RAG: Unlocking LLM Discovery on Narrative Private Data"  
+  *arXiv preprint* - [arXiv:2404.16130](https://arxiv.org/abs/2404.16130)
+
+### Hybrid Search Resources
+
+**Pinecone Hybrid Search Guide**
+- [https://www.pinecone.io/learn/hybrid-search/](https://www.pinecone.io/learn/hybrid-search/)
+
+**Weaviate Hybrid Search Documentation**
+- [https://weaviate.io/developers/weaviate/search/hybrid](https://weaviate.io/developers/weaviate/search/hybrid)
+
+**Elasticsearch Vector Search**
+- [https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html](https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html)
