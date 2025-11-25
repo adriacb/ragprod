@@ -15,29 +15,41 @@ DAT performs both retrieval methods in parallel:
 
 ### 2. Effectiveness Evaluation
 
-An LLM evaluates the top results from each method:
+An LLM evaluates the top results from each method using a 0-5 discrete scoring rubric:
 
 ```python
 Query: "How do I write concurrent code?"
 
 Dense Top Result: "Asyncio enables concurrent programming in Python..."
-→ LLM Score: 0.9 (highly relevant)
+→ LLM Score: 5 (Direct hit - directly answers the question)
 
 Sparse Top Result: "Python code examples for beginners..."
-→ LLM Score: 0.3 (less relevant)
+→ LLM Score: 2 (Bad wrong result - loosely related but misleading)
 ```
+
+**Scoring Rubric** (from DAT paper):
+- **5 points**: Direct hit - document directly answers the question
+- **3-4 points**: Good wrong result - conceptually close, correct answer likely nearby
+- **1-2 points**: Bad wrong result - loosely related but misleading
+- **0 points**: Completely off-track - totally unrelated
 
 ### 3. Dynamic Alpha Calculation
 
-Based on effectiveness scores, DAT calculates the optimal weight (alpha):
+Based on effectiveness scores, DAT uses a **case-aware formulation** to calculate alpha:
 
 ```python
-alpha = dense_score / (dense_score + sparse_score)
-# Example: 0.9 / (0.9 + 0.3) = 0.75
+# Case 4 (Proportional): alpha = dense_score / (dense_score + sparse_score)
+alpha = 5 / (5 + 2) = 0.714... → 0.7 (rounded to 1 decimal)
+
+# Special cases from paper:
+# - Case 1: Both fail (0, 0) → α = 0.5
+# - Case 2: Dense perfect (5, <5) → α = 1.0
+# - Case 3: Sparse perfect (<5, 5) → α = 0.0
+# - Case 4: Proportional (other) → α = dense/(dense+sparse)
 
 # This means:
-# - Dense results get 75% weight
-# - Sparse results get 25% weight
+# - Dense results get 70% weight
+# - Sparse results get 30% weight
 ```
 
 ### 4. Weighted Combination
@@ -193,7 +205,8 @@ Studies show DAT improves retrieval quality by 15-30% over fixed-weight hybrid a
 class CustomScorer(EffectivenessScorer):
     async def score_results(self, query, dense_results, sparse_results):
         # Custom scoring logic
-        return {"dense_score": 0.8, "sparse_score": 0.6}
+        # Must return integers 0-5 per paper specification
+        return {"dense_score": 4, "sparse_score": 3}
 
 scorer = CustomScorer(llm_client)
 tuner = AlphaTuner(scorer)

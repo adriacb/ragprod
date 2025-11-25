@@ -1,4 +1,10 @@
-"""DAT (Dynamic Alpha Tuning) retrieval strategy implementation."""
+"""DAT (Dynamic Alpha Tuning) retrieval strategy implementation.
+
+References:
+    Hsu, H.-L., & Tzeng, J. (2025). "DAT: Dynamic Alpha Tuning for Hybrid Retrieval 
+    in Retrieval-Augmented Generation". arXiv:2503.23013
+    https://arxiv.org/abs/2503.23013
+"""
 
 import logging
 from typing import Any, List
@@ -13,8 +19,17 @@ from ragprod.domain.retrieval.strategies.dat.config import DATConfig
 class DATStrategy(BaseRetrievalStrategy):
     """Dynamic Alpha Tuning hybrid retrieval strategy.
 
-    Combines dense (semantic) and sparse (BM25) retrieval with dynamic
-    weighting based on LLM-evaluated effectiveness.
+    Implements the complete DAT algorithm from the paper:
+    1. Hybrid retrieval (dense + sparse)
+    2. LLM-based effectiveness scoring (top-1 evaluation)
+    3. Dynamic alpha calculation (case-aware)
+    4. Final score fusion
+    
+    References:
+        DAT Paper Section 4: "To overcome the limitations of static weighting in 
+        hybrid retrieval, we introduce DAT, a query-adaptive framework that 
+        dynamically adjusts the retrieval weighting coefficient based on the 
+        effectiveness of each method for a given query."
     """
 
     def __init__(
@@ -42,6 +57,15 @@ class DATStrategy(BaseRetrievalStrategy):
         self, query: Query, collection_name: str, top_k: int = 10
     ) -> List[RetrievalResult]:
         """Retrieve relevant documents using dynamic alpha tuning.
+        
+        Implements the complete DAT algorithm:
+        - Step 1: Perform hybrid retrieval (dense + sparse)
+        - Step 2: LLM evaluates top-1 from each method (via alpha_tuner)
+        - Step 3: Calculate dynamic alpha (via alpha_tuner)
+        - Step 4: Fuse scores with alpha weighting (via alpha_tuner)
+        
+        References:
+            DAT Paper Section 4: Complete DAT workflow
 
         Args:
             query: The query to retrieve documents for
@@ -54,20 +78,20 @@ class DATStrategy(BaseRetrievalStrategy):
         try:
             self.logger.info(f"DAT retrieval for query: '{query.text}' in collection: {collection_name}")
 
-            # Perform dense retrieval
+            # DAT Step 1: Perform hybrid retrieval
+            # Paper: "we retrieve the top-1 result from both sparse and dense retrieval methods"
             dense_results = await self._dense_retrieve(query, collection_name, self.config.top_k_dense)
-
-            # Perform sparse retrieval
             sparse_results = await self._sparse_retrieve(query, collection_name, self.config.top_k_sparse)
 
-            # Calculate optimal alpha if dynamic tuning is enabled
+            # DAT Steps 2-3: Calculate optimal alpha if dynamic tuning is enabled
+            # (LLM scoring + alpha calculation happen in alpha_tuner)
             if self.config.use_dynamic_tuning:
                 alpha = await self.alpha_tuner.calculate_alpha(query, dense_results, sparse_results)
             else:
                 alpha = self.config.dense_weight_default
                 self.logger.info(f"Using default alpha: {alpha}")
 
-            # Combine results with alpha weighting
+            # DAT Step 4: Combine results with alpha weighting (score fusion)
             combined_results = self.alpha_tuner.apply_alpha(alpha, dense_results, sparse_results)
 
             # Return top-k results
